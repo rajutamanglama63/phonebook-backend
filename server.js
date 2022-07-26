@@ -38,6 +38,15 @@ app.get("/", (req, res) => {
     res.send("<h1>Hello World</h1>")
 })
 
+app.get("/api/persons", (req, res) => {
+    res.status(200).send(persons)
+})
+
+app.get("/api/info", (req, res) => {
+    const date = new Date();
+    res.status(200).send(`<p>Phonebook has info for ${persons.length} people</p><p>${date}</p>`)
+})
+
 app.listen(Port, (req, res) => {
     console.log(`Server running on port http://localhost:${Port}`);
 });
