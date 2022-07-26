@@ -68,7 +68,7 @@ app.delete("/api/persons/:id", (req, res) => {
   const currentId = Number(req.params.id)
   persons = persons.filter((person) => person.id !== currentId)
 
-  res.status(202).json({msg : "Person successfully deleted."})
+  res.status(202).json({msg : "Contact successfully deleted."})
 })
 
 // api to add new person's contact in phonebook
