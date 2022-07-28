@@ -9,6 +9,7 @@ const Port = process.env.PORT || 3002;
 
 app = express();
 
+app.use(express.static("build"))  
 app.use(cors());
 app.use(express.json());
 
