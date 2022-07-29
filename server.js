@@ -50,23 +50,45 @@ app.use(
 //     res.send("<h1>Hello World</h1>")
 // })
 
-// api to get lists of person
-// app.get("/api/persons", (req, res) => {
-//   res.status(200).send(persons);
-// });
+// api to get lists of contact of persons
+app.get("/api/persons", (req, res, next) => {
+  // res.status(200).send(persons);
+
+  Contact.find()
+    .then((allContact) => {
+      res.status(200).json(allContact);
+    })
+    .catch((err) => next(err));
+});
 
 // api to get phonebook info
-// app.get("/api/info", (req, res) => {
-//   const date = new Date();
-//   res
-//     .status(200)
-//     .send(
-//       `<p>Phonebook has info for ${persons.length} people</p><p>${date}</p>`
-//     );
-// });
+app.get("/api/info", (req, res) => {
+  const date = new Date();
+  res
+    .status(200)
+    .send(
+      `<p>Phonebook has info for ${Contact.length} people</p><p>${date}</p>`
+    );
+});
+
+// api to update specific person's contact info
+app.put("/api/persons/:id", (req, res, next) => {
+  const contactId = req.params.id;
+
+  const contactToUpdate = {
+    name: req.body.name,
+    number: req.body.number,
+  };
+
+  Contact.findByIdAndUpdate(contactId, contactToUpdate, { new: true })
+    .then((updatedContact) => {
+      res.status(200).json(updatedContact);
+    })
+    .catch((err) => next(err));
+});
 
 // api to get specific person
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   // USING HARD CODED ARREY AD DB
   //   const currentId = Number(req.params.id);
   //   const specificPerson = persons.find((person) => person.id === currentId);
@@ -85,22 +107,30 @@ app.get("/api/persons/:id", (req, res) => {
       res.status(200).json(specificPerson);
       // console.log(specificPerson);
     })
-    .catch((err) => {
-      res.status(404).json({ err: err.message });
-    });
+    .catch((err) => next(err));
 });
 
 // api to delete specific person
-// app.delete("/api/persons/:id", (req, res) => {
-//   const currentId = Number(req.params.id);
-//   persons = persons.filter((person) => person.id !== currentId);
+app.delete("/api/persons/:id", (req, res, next) => {
+  // USING HARD CODED ARREY AD DB
+  //   const currentId = Number(req.params.id);
+  //   persons = persons.filter((person) => person.id !== currentId);
 
-//   res.status(202).json({ msg: "Contact successfully deleted." });
-// });
+  //   res.status(202).json({ msg: "Contact successfully deleted." });
+
+  // USING MONGO AS DB
+  const currId = req.params.id;
+
+  Contact.findByIdAndRemove(currId)
+    .then((deletedContact) => {
+      res.status(202).json({ success: "Successfully deleted", deletedContact });
+    })
+    .catch((err) => next(err));
+});
 
 // api to add new person's contact in phonebook
 app.post("/api/persons/", (req, res) => {
-  // USING ARRAY
+  // USING HARD CODED ARREY AD DB
   // const newPerson = req.body;
   // // newPerson.id = Math.floor(Math.random() * 10000);
 
@@ -131,6 +161,19 @@ app.post("/api/persons/", (req, res) => {
     res.json(savedContact);
   });
 });
+
+// ERROR HANDLER MIDDLEWARE
+const errorHandler = (err, req, res, next) => {
+  console.error(err.message);
+
+  if (err.name === "CastError") {
+    return res.status(400).send({ err: "malformatted id" });
+  }
+
+  next(err);
+};
+
+app.use(errorHandler);
 
 app.listen(Port, () => {
   console.log(`Server running on port http://localhost:${Port}`);
