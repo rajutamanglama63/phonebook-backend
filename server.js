@@ -66,17 +66,29 @@ app.use(
 // });
 
 // api to get specific person
-// app.get("/api/persons/:id", (req, res) => {
-//   const currentId = Number(req.params.id);
-//   const specificPerson = persons.find((person) => person.id === currentId);
-//   // console.log(specificPerson)
-//   if (persons.includes(specificPerson)) res.status(200).json(specificPerson);
-//   else
-//     res.status(404).json({
-//       err: "404 not found",
-//       msg: "Person with that id doesnot exist.",
-//     });
-// });
+app.get("/api/persons/:id", (req, res) => {
+  // USING HARD CODED ARREY AD DB
+  //   const currentId = Number(req.params.id);
+  //   const specificPerson = persons.find((person) => person.id === currentId);
+  //   // console.log(specificPerson)
+  //   if (persons.includes(specificPerson)) res.status(200).json(specificPerson);
+  //   else
+  //     res.status(404).json({
+  //       err: "404 not found",
+  //       msg: "Person with that id doesnot exist.",
+  //     });
+
+  // USING MONGO AS DB
+  const currId = req.params.id;
+  Contact.findById(currId)
+    .then((specificPerson) => {
+      res.status(200).json(specificPerson);
+      // console.log(specificPerson);
+    })
+    .catch((err) => {
+      res.status(404).json({ err: err.message });
+    });
+});
 
 // api to delete specific person
 // app.delete("/api/persons/:id", (req, res) => {
