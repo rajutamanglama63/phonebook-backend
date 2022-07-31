@@ -63,12 +63,16 @@ app.get("/api/persons", (req, res, next) => {
 
 // api to get phonebook info
 app.get("/api/info", (req, res) => {
-  const date = new Date();
-  res
+  const date = new Date;
+
+  Contact.find().then((allContact) => {
+    res
     .status(200)
     .send(
-      `<p>Phonebook has info for ${Contact.length} people</p><p>${date}</p>`
+      `<p>Phonebook has info for ${allContact.length} people</p><p>${date}</p>`
     );
+  })
+ 
 });
 
 // api to update specific person's contact info
@@ -80,9 +84,9 @@ app.put("/api/persons/:id", (req, res, next) => {
     number: req.body.number,
   };
 
-  Contact.findByIdAndUpdate(contactId, contactToUpdate, { new: true })
+  Contact.findByIdAndUpdate(contactId, contactToUpdate, { new: true, runValidators : true, context : "query" })
     .then((updatedContact) => {
-      res.status(200).json(updatedContact);
+      res.status(200).json({success : true, msg : "Contact updated successfully.", updatedContact});
     })
     .catch((err) => next(err));
 });
