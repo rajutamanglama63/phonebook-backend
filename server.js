@@ -129,7 +129,7 @@ app.delete("/api/persons/:id", (req, res, next) => {
 });
 
 // api to add new person's contact in phonebook
-app.post("/api/persons/", (req, res) => {
+app.post("/api/persons/", (req, res, next) => {
   // USING HARD CODED ARREY AD DB
   // const newPerson = req.body;
   // // newPerson.id = Math.floor(Math.random() * 10000);
@@ -148,19 +148,20 @@ app.post("/api/persons/", (req, res) => {
 
   // USING MONGODB
 
-  if (req.body.name === undefined) {
-    return res.status(400).json({ err: "name missing" });
-  }
+  // if (req.body.name === undefined) {
+  //   return res.status(400).json({ err: "name missing" });
+  // }
 
   const contact = new Contact({
     name: req.body.name,
     number: req.body.number,
+    date: new Date(),
   });
 
   contact.save().then((savedContact) => {
-    res.json(savedContact);
-  });
-});
+    res.status(200).json({success : true, msg : "Contact successfully created.", savedContact});
+  }).catch((err) => next(err));
+})
 
 // ERROR HANDLER MIDDLEWARE
 const errorHandler = (err, req, res, next) => {
@@ -168,6 +169,8 @@ const errorHandler = (err, req, res, next) => {
 
   if (err.name === "CastError") {
     return res.status(400).send({ err: "malformatted id" });
+  } else if(err.name === "ValidationError") {
+    return res.status(400).json({err : err.message})
   }
 
   next(err);
