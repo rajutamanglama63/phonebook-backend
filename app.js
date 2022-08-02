@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 
 const contactRouter = require("./controllers/contact");
+const middleware = require("./utils/middleware");
 
 app = express();
 
@@ -47,16 +48,7 @@ app.use(
 // })
 
 // ERROR HANDLER MIDDLEWARE
-const errorHandler = (err, req, res, next) => {
-  console.error(err.message);
+app.use(middleware.unKnownEndpoint);
+app.use(middleware.errorHandler);
 
-  if (err.name === "CastError") {
-    return res.status(400).send({ err: "malformatted id" });
-  } else if (err.name === "ValidationError") {
-    return res.status(400).json({ err: err.message });
-  }
-
-  next(err);
-};
-
-app.use(errorHandler);
+module.exports = app;
