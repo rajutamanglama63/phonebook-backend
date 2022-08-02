@@ -7,8 +7,6 @@ const Contact = require("./models/contactSchema");
 
 dotenv.config();
 
-const Port = process.env.PORT || 3002;
-
 app = express();
 
 app.use(express.static("build"));
