@@ -10,7 +10,7 @@ app = express();
 app.use(express.static("build"));
 app.use(cors());
 app.use(express.json());
-app.use("api/persons", contactRouter);
+app.use("/api/persons", contactRouter);
 
 morgan.token("body", (req, res) => JSON.stringify(req.body));
 app.use(

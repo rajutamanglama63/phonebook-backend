@@ -1,9 +1,7 @@
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
+const config = require("../utils/config");
 
-dotenv.config();
-
-const url = process.env.MONGO_URI;
+const url = config.MONGO_URI;
 
 mongoose
   .connect(url)
@@ -16,18 +14,18 @@ mongoose
 
 const contactSchema = new mongoose.Schema({
   name: {
-    type : String,
-    minLength : 3,
-    required : true
+    type: String,
+    minLength: 3,
+    required: true,
   },
   number: {
-    type : Number,
-    required : true
+    type: Number,
+    required: true,
   },
-  date : {
-    type : Date,
-    required : true
-  }
+  date: {
+    type: Date,
+    required: true,
+  },
 });
 
 contactSchema.set("toJSON", {
@@ -38,4 +36,6 @@ contactSchema.set("toJSON", {
   },
 });
 
-module.exports = mongoose.model("Contect", contactSchema);
+const Contact = mongoose.model("Contect", contactSchema);
+
+module.exports = Contact;
